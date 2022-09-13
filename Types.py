@@ -5,11 +5,10 @@ frontend to the backend, because the structure of a JSON file is nested.
 """
 
 from typing import List
-from numpy import int8
 from pydantic import BaseModel
 
 class Item(BaseModel):
-    name: int8
+    name: int
 
 class ItemList(BaseModel):
     items: List[Item]

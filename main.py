@@ -21,6 +21,7 @@ async def root(request: Request):
 
 @app.post("/get_response")
 @limiter.limit("100/minute")
-async def getResults(responses: ItemList):
-    result = evaluation(responses)
-    return {"message": result}
+async def getResults(request: Request):
+    print(request)
+    # result = evaluation(responses)
+    return {"message": "t"}
