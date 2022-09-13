@@ -1,3 +1,7 @@
+""" Server Configurations 
+
+"""
+
 from fastapi import FastAPI, Request
 from slowapi.errors import RateLimitExceeded
 from slowapi import Limiter, _rate_limit_exceeded_handler

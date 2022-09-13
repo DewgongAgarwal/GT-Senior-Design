@@ -1,3 +1,7 @@
+""" Database Configurations 
+
+"""
+
 from deta import Deta
 from decouple import config
 
