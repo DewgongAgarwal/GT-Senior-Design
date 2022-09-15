@@ -7,8 +7,5 @@ frontend to the backend, because the structure of a JSON file is nested.
 from typing import List
 from pydantic import BaseModel
 
-class Item(BaseModel):
-    name: int
-
-class ItemList(BaseModel):
-    items: List[Item]
+class Items(BaseModel):
+    answers: List[int]
