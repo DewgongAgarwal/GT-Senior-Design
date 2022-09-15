@@ -11,7 +11,7 @@ import json
 
 ############## placeholder ###############
 def evaluation():
-    pass
+    return ""
 ##########################################
 
 
@@ -25,4 +25,6 @@ async def root(request: Request):
 @limiter.limit("100/minute")
 async def getResults(request: Request, responses: Items):
     inputVector = responses.answers
+    prediction = evaluation()
+    add_response_to_db(inputVector, prediction)
     return {"message": "t"}
