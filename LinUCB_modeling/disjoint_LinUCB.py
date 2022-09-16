@@ -9,11 +9,17 @@ import json
 ARMS = ["Academic Services", "Career Exploration and Coaching", "Wellness Enhancement Opportunities",
         "Physical Wellbeing Resources", "Mindfulness Resources", "Social Wellbeing and Engagement",
         "Spiritual Engagement and Volunteering", "Disability Services", "Academic Support - Dean of Students",
-        "GT Counseling Center", "Other"]
+        "One-on-One Consultation", "Other"]
 CONTEXT_DIM = 25
+alpha = 0.05
+
+adjacency_list = {
+    ("Academic Services", "Academic Support - Dean of Students") : 0.5,
+    ("Academic Support - Dean of Students", "Academic Services") : 0.3
+}
 
 
-# # reading JSON from file
+# reading JSON from file
 def get_data_from_JSONfile(filepath):
     f = open(filepath)
     data = json.load(f)
@@ -22,35 +28,31 @@ def get_data_from_JSONfile(filepath):
     return data
 
 
-# # reading JSON from a JSON string
+# reading JSON from a JSON string
 def get_data_from_JSONstring(jstring):
     data = json.loads(jstring)
 
     return data
 
 
-def get_prediction(input_context, alpha, input_A=None, input_b=None):
+def get_prediction(input_context, input_A=None, input_b=None):
     '''
     Input:
         input_context: survey response data, a 1D CONTEXT_DIM dimensional array
-        alpha: exloration parameter
-        input_A: input A from previous training sessions
-        input_b: input b from previous training sessions
+        input_A: passed in list of matrices for A
+        input_b: passed in list of vectors for b
     
     Output:
         prediction: the arm that should be pulled, a string name 
     '''
+    # TODO: read A and b from JSON file --> maybe should check if input_A, input_b not None
+    A = get_data_from_JSONfile("A.json")
+    # is A = {arm: np.identity(CONTEXT_DIM) for arm in ARMS} on start
+    b = get_data_from_JSONfile("b.json")
+    # is b = {arm: np.zeros(CONTEXT_DIM) for arm in ARMS}
+
     # convert input context to an np array
     context = np.array(input_context)
-
-    # load input A and b
-    A = {arm: np.identity(CONTEXT_DIM) for arm in ARMS}
-    if(input_A is not None):
-        A = input_A
-
-    b = {arm: np.zeros(CONTEXT_DIM) for arm in ARMS}
-    if(input_b is not None):
-        b = input_b
 
     # run model on current parameters
     UCB = []
@@ -68,32 +70,42 @@ def get_prediction(input_context, alpha, input_A=None, input_b=None):
     return prediction
 
 
-def update_model_parameters(input_context, prediction, ground_truth, input_A, input_b):
+def update_model_parameters(input_context, prediction, ground_truth):
     '''
     Input:
         input_context: survey response data, a 1D CONTEXT_DIM dimensional array
-        alpha: exloration parameter
-        input_A: input A from previous training sessions
-        input_b: input b from previous training sessions
-    
-    Output:
-        output_A_arm: updated A for chosen arm (prediction) given new validation
-        output_b_arm: updated b for chosen arm (prediction) given new validation
+        prediction: predicted arm to pull, result from model
+        ground_truth: true value of arm to pull, result from validation from GTCC
     '''
+    # TODO: read A and b from JSON file
+    A = get_data_from_JSONfile("A.json")
+    b = get_data_from_JSONfile("b.json")
+
     # convert input context to an np array
     context = np.array(input_context)
 
     # generate reward given prediction and ground truth (true arm)
     r = generate_reward(prediction, ground_truth)
 
-    output_A_arm = input_A[prediction] + ( context.reshape((CONTEXT_DIM,1)) @ context.reshape((1,CONTEXT_DIM)) )
-    output_b_arm = input_b[prediction] + (r * context)
+    A[prediction] = A[prediction] + ( context.reshape((CONTEXT_DIM,1)) @ context.reshape((1,CONTEXT_DIM)) )
+    b[prediction] = b[prediction] + (r * context)
     # Note: these are for the pulled arm (so need to set A[prediction] = output_A_arm, and
     # b[prediction] = output_b_arm to actually update the values)
 
-    return output_A_arm, output_b_arm
+    # replace JSON file contents
+    with open("A.json", "w") as Afile:
+        json.dump(A, Afile)
+    
+    with open("b.json", "w") as bfile:
+        json.dump(b, bfile)
 
 
 def generate_reward(prediction, ground_truth):
     #TODO: figure out how to calculate reward
-    return None
+    if(prediction == ground_truth):
+        return 1.0
+    else:
+        if((ground_truth, prediction) in adjacency_list):
+            return adjacency_list[(ground_truth, prediction)]
+        else:
+            return 0.0
