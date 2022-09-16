@@ -6,12 +6,14 @@ Imports all files and defines the paths which would be called from frontend
 from config import *
 from model import *
 from Types import *
+import json
 
 
 ############## placeholder ###############
 def evaluation():
-    pass
+    return ""
 ##########################################
+
 
 @app.get("/")
 @limiter.limit("100/minute")
@@ -21,6 +23,8 @@ async def root(request: Request):
 
 @app.post("/get_response")
 @limiter.limit("100/minute")
-async def getResults(responses: ItemList):
-    result = evaluation(responses)
-    return {"message": result}
+async def getResults(request: Request, responses: Items):
+    inputVector = responses.answers
+    prediction = evaluation()
+    add_response_to_db(inputVector, prediction)
+    return {"message": "t"}
