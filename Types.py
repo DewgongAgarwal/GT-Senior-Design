@@ -9,3 +9,11 @@ from pydantic import BaseModel
 
 class Items(BaseModel):
     answers: List[int]
+
+class AuthKeys(BaseModel):
+    token: str
+
+class Validation(BaseModel):
+    id: str
+    token: str
+    actual: str
