@@ -17,6 +17,19 @@ adjacency_list = {
     ("Academic Support - Dean of Students", "Academic Services") : 0.3
 }
 
+def _resetJSON():
+    Adict = {}
+    bdict = {}
+
+    for arm in ARMS:
+        Adict[arm] = list(map(list, np.identity(CONTEXT_DIM)))
+        bdict[arm] = list(np.zeros(CONTEXT_DIM))
+
+    with open("A.json", "w") as Afile:
+        json.dump(Adict, Afile)
+    with open("b.json", "w") as bfile:
+        json.dump(bdict, bfile)
+
 
 # reading JSON from file
 def get_data_from_JSONfile(filepath):
