@@ -45,6 +45,14 @@ def updatePrediction(id, actualValue):
         session.commit()
         session.refresh(record)
         print("Updated:", record)
+    
+    return record.questions, record.prediction if record else None, None
+
+def totalUnverified(): 
+    with Session(engine) as session:
+        statement = select(Records).where(Records.validated == False)
+        results = list(session.exec(statement))
+        return len(results)
 
 def resetDb():
     with Session(engine) as session:

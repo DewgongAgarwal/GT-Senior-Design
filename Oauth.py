@@ -2,6 +2,7 @@ from cas import CASClient
 from typing import Optional
 from fastapi import *
 from config import *
+from model import totalUnverified
 
 user = None
 authorizedUsers = ["dagarwal47"]
@@ -74,7 +75,7 @@ def login(request: Request, ticket: Optional[str] = None):
         auth_token = auth_token_generator()
         response = RedirectResponse(frontend_url)
         _add_cookie_to_reponse(
-            response, {"message": "Login Success.", "authToken": auth_token}
+            response, {"message": "Login Success.", "authToken": auth_token, "total": totalUnverified()}
         )
         return response
 
