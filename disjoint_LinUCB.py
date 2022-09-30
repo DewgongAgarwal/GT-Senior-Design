@@ -9,7 +9,7 @@ ARMS = ["Academic Services", "Career Exploration and Coaching", "Wellness Enhanc
         "Physical Wellbeing Resources", "Mindfulness Resources", "Social Wellbeing and Engagement",
         "Spiritual Engagement and Volunteering", "Disability Services", "Academic Support - Dean of Students",
         "One-on-One Consultation", "Other"]
-CONTEXT_DIM = 22
+CONTEXT_DIM = 29
 alpha = 0.05
 
 adjacency_list = {
