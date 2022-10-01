@@ -13,7 +13,7 @@ class Records(SQLModel, table=True):
     actual: Optional[str] = Field(default=None)
     validated: bool = Field(default=False)
 
-DBURL = os.environ.get('DATABASE_URL', None)
+DBURL = os.environ.get('DB_URL', None)
 engine = create_engine(DBURL)
 SQLModel.metadata.create_all(engine)
 
