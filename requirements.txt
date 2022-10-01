@@ -1,4 +1,4 @@
-cas==1.0.10
+python-cas
 fastapi==0.85.0
 numpy
 gunicorn
