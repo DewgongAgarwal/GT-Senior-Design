@@ -1,0 +1,8 @@
+cas==1.0.10
+fastapi==0.85.0
+numpy==1.20.2
+pydantic==1.10.2
+PyJWT==2.5.0
+python-decouple==3.6
+slowapi==0.1.6
+sqlmodel==0.0.8
