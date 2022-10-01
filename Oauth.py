@@ -1,4 +1,4 @@
-from cas import CASClient
+import cas
 from typing import Optional
 from fastapi import *
 from config import *
@@ -8,7 +8,7 @@ user = None
 authorizedUsers = ["dagarwal47"]
 
 
-cas_client = CASClient(
+cas_client = cas.CASClient(
     version=2,
     server_url="https://login.gatech.edu/cas/login",
     service_url="https://sd-be.herokuapp.com/login",
