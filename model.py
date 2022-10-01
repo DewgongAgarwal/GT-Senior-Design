@@ -4,6 +4,7 @@
 
 from typing import Optional
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+import os
 
 class Records(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -12,7 +13,8 @@ class Records(SQLModel, table=True):
     actual: Optional[str] = Field(default=None)
     validated: bool = Field(default=False)
 
-engine = create_engine("sqlite:///database.db")
+DBURL = os.environ.get('DATABASE_URL', None)
+engine = create_engine(DBURL)
 SQLModel.metadata.create_all(engine)
 
 def add_response_to_db(responses, predictionGiven):

@@ -13,7 +13,7 @@ from decouple import config
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 
-frontend_url = "http://localhost:5173"
+frontend_url = "https://shimmering-sable-27cc10.netlify.app/"
 
 key = config("KEY", default="")
 
