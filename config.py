@@ -13,7 +13,7 @@ from decouple import config
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 
-frontend_url = "https://shimmering-sable-27cc10.netlify.app/"
+frontend_url = "https://main--shimmering-sable-27cc10.netlify.app"
 
 key = config("KEY", default="")
 
@@ -25,7 +25,7 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
