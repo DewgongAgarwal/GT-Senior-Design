@@ -2,6 +2,8 @@
 
 Imports all files and defines the paths which would be called from frontend
 """
+from dotenv import load_dotenv
+load_dotenv()
 
 from config import *
 from model import *
