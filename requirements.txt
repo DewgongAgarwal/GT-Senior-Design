@@ -1,11 +1,10 @@
-python-cas
-fastapi==0.85.0
-numpy
-gunicorn
-psycopg2
-uvicorn
+cas==1.0.10
+fastapi==0.85.1
+numpy==1.22.3
 pydantic==1.10.2
 PyJWT==2.5.0
 python-decouple==3.6
+python-dotenv==0.21.0
+python_cas==1.6.0
 slowapi==0.1.6
 sqlmodel==0.0.8

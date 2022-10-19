@@ -13,7 +13,7 @@ from decouple import config
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 
-frontend_url = "http://mental-health-sd.netlify.app"
+frontend_url = "https://mental-health-sd.netlify.app"
 
 key = config("KEY", default="")
 

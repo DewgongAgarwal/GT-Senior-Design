@@ -11,7 +11,7 @@ authorizedUsers = ["dagarwal47"]
 cas_client = CASClient(
     version=2,
     server_url="https://login.gatech.edu/cas/login",
-    service_url="http://localhost:8000/login",
+    service_url="https://sd-be.herokuapp.com/login",
 )
 
 
