@@ -65,7 +65,7 @@ def login(request: Request, ticket: Optional[str] = None):
     user, attributes, pgtiou = cas_client.verify_ticket(ticket)
     print(user)
 
-    if not user #or user not in authorizedUsers:
+    if not user: #or user not in authorizedUsers:
         response = RedirectResponse(frontend_url)
         _add_cookie_to_reponse(
             response, {"message": "Login Failed / Unauthorized Access"}
