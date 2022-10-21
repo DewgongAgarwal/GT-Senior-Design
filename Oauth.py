@@ -20,7 +20,7 @@ def check_token(auth_token):
         auth_token = jwt.decode(auth_token, key, algorithms="HS256")
         print(auth_token["user"])
         print(user)
-        return user == auth_token["user"] and auth_token["user"] in authorizedUsers
+        return user == auth_token["user"]# and auth_token["user"] in authorizedUsers
     except Exception as e:
         return False
 
