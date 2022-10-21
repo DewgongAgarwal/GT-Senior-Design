@@ -27,7 +27,7 @@ def check_token(auth_token):
 
 def _add_cookie_to_reponse(response, params):
     for i in params:
-        response.set_cookie(key=i, value=params[i])
+        response.set_cookie(key=i, value=params[i],domain=frontend_url)
 
 
 def auth_token_generator(payload=None):
