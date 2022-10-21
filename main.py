@@ -24,7 +24,7 @@ async def root(request: Request):
 async def getResults(request: Request, responses: Items, background_tasks: BackgroundTasks):
     inputVector = responses.answers
     prediction = get_prediction(inputVector)
-    background_tasks(add_response_to_db, inputVector, prediction)
+    background_tasks(add_response_to_db, responses=inputVector, predictionGiven=prediction)
     return {"message": prediction}
 
 
