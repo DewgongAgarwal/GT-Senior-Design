@@ -16,6 +16,7 @@ cas_client = CASClient(
 
 
 def check_token(auth_token):
+    global user
     try:
         auth_token = jwt.decode(auth_token, key, algorithms="HS256")
         print(auth_token["user"])
