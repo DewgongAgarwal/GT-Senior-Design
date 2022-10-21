@@ -11,7 +11,7 @@ authorizedUsers = []
 cas_client = CASClient(
     version=2,
     server_url="https://login.gatech.edu/cas/login",
-    service_url="https://mental-health-sd.com/login",
+    service_url="https://www.mental-health-sd.com/login",
 )
 
 
