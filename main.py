@@ -50,6 +50,7 @@ async def refresh(request: Request, response: Response, responses: AuthKeys):
 @app.post("/getNext")
 @limiter.limit("100/minute")
 async def next(request: Request, response: Response, responses: AuthKeys):
+    print(responses.token)
     if Oauth.check_token(responses.token):
         response = dict(read_next_invalidated())
         if "data" in response and not response["data"]:
