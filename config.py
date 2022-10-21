@@ -2,7 +2,7 @@
 
 """
 
-from fastapi import Depends, FastAPI, Request, Response, status
+from fastapi import Depends, FastAPI, Request, Response, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, HTMLResponse
 from slowapi.errors import RateLimitExceeded

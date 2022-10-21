@@ -21,10 +21,10 @@ async def root(request: Request):
 
 @app.post("/get_response")
 @limiter.limit("100/minute")
-async def getResults(request: Request, responses: Items):
+async def getResults(request: Request, responses: Items, background_tasks: BackgroundTasks):
     inputVector = responses.answers
     prediction = get_prediction(inputVector)
-    add_response_to_db(inputVector, prediction)
+    background_tasks(add_response_to_db, inputVector, prediction)
     return {"message": prediction}
 
 
