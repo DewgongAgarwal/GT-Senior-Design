@@ -2,11 +2,9 @@ from cas import CASClient
 from typing import Optional
 from fastapi import *
 from config import *
-from model import totalUnverified
+from model import *
 
-user = None
 authorizedUsers = []
-
 
 cas_client = CASClient(
     version=2,
@@ -15,13 +13,11 @@ cas_client = CASClient(
 )
 
 
-def check_token(auth_token):
-    global user
+def check_token(token):
     try:
-        auth_token = jwt.decode(auth_token, key, algorithms="HS256")
+        auth_token = jwt.decode(token, key, algorithms="HS256")
         print(auth_token["user"])
-        print(user)
-        return user == auth_token["user"]# and auth_token["user"] in authorizedUsers
+        return check_user(auth_token["user"], token)# and auth_token["user"] in authorizedUsers
     except Exception as e:
         return False
 
@@ -31,7 +27,7 @@ def _add_cookie_to_reponse(response, params):
         response.set_cookie(key=i, value=params[i], domain=".mental-health-sd.com")
 
 
-def auth_token_generator(payload=None):
+def auth_token_generator(user):
     return jwt.encode(
         {
             "user": user,
@@ -42,22 +38,22 @@ def auth_token_generator(payload=None):
     )
 
 
-def refresh(request: Request, response: Response, token):
+def refresh(request: Request, response: Response, background_tasks: BackgroundTasks, token):
     if token is not None:
-
         try:
             print(token)
             auth_token = jwt.decode(token, key, algorithms="HS256")
-            if user == auth_token["user"] and auth_token["user"] not in authorizedUsers:
+            if check_user(auth_token["user"], token): #and auth_token["user"] not in authorizedUsers:
                 raise Exception("Unauthorized User")
-            token = auth_token_generator()
+            token = auth_token_generator(auth_token["user"])
+            background_tasks.add_task(update_authToken, auth_token["user"], token)
             return {"authToken": token}
         except Exception as e:
             response.status_code = status.HTTP_400_BAD_REQUEST
             return {"message": "Login Again", "redirect_url": f"/logout"}
+    return {"message": "Login Again", "redirect_url": f"/logout"}        
 
-def login(request: Request, ticket: Optional[str] = None):
-    global user
+def login(request: Request, background_tasks: BackgroundTasks, ticket: Optional[str] = None):
     if not ticket:
         cas_login_url = cas_client.get_login_url()
         print(cas_login_url)
@@ -73,7 +69,8 @@ def login(request: Request, ticket: Optional[str] = None):
         )
         return response
     else:
-        auth_token = auth_token_generator()
+        auth_token = auth_token_generator(user)
+        background_tasks.add_task(add_to_user, user, auth_token)
         response = RedirectResponse(frontend_url)
         _add_cookie_to_reponse(
             response, {"message": "Login Success.", "authToken": auth_token, "total": totalUnverified()}
@@ -81,12 +78,19 @@ def login(request: Request, ticket: Optional[str] = None):
         return response
 
 
-def logout(request: Request):
-    global user
-    user = None
-    cas_logout_url = cas_client.get_logout_url()
-    return {
-        "redirect_url": cas_logout_url,
-        "requestType": "CAS",
-        "message": "Logout Success.",
-    }
+def logout(request: Request, background_tasks: BackgroundTasks, token):
+
+    if token is not None:
+        try:
+            print(token)
+            auth_token = jwt.decode(token, key, algorithms="HS256")
+            if check_user(auth_token["user"], token): #and auth_token["user"] not in authorizedUsers:
+                raise Exception("Unauthorized User")
+            background_tasks.add_task(remove_from_user, auth_token["user"])
+        finally:
+            cas_logout_url = cas_client.get_logout_url()
+            return {
+                "redirect_url": cas_logout_url,
+                "requestType": "CAS",
+                "message": "Logout Success.",
+            }

@@ -13,6 +13,10 @@ class Records(SQLModel, table=True):
     actual: Optional[str] = Field(default=None)
     validated: bool = Field(default=False)
 
+class User(SQLModel, table=True):
+    username: Optional[str] = Field(default=None, primary_key=True)
+    auth: Optional[str] = Field(defualt=None) 
+
 # engine = create_engine("sqlite:///database.db")
 # SQLModel.metadata.create_all(engine)
 DBURL = os.environ.get('DB_URL', None)
@@ -57,6 +61,37 @@ def totalUnverified():
         statement = select(Records).where(Records.validated == False)
         results = list(session.exec(statement))
         return len(results)
+
+def update_authToken(user, auth_token):
+    with Session(engine) as session:
+        userRecord = select(User, user)
+        if not userRecord:
+            return
+        userRecord.auth = auth_token 
+        session.add(userRecord)
+        session.commit()
+        session.refresh(userRecord)
+
+def add_to_user(user, auth_token):
+    data = User(username = user, auth = auth_token)
+    with Session(engine) as session:
+        session.add(data)
+        session.commit()
+
+def check_user(decoded_user, auth_token):
+    with Session(engine) as session:
+        user = select(User, decoded_user)
+        if not user:
+            return False
+        return user.auth == auth_token
+
+def remove_from_user(user):
+    with Session(engine) as session:
+        userRecord = select(User, user)
+        if not userRecord:
+            return
+        session.delete(userRecord)
+        session.commit()
 
 def resetDb():
     with Session(engine) as session:

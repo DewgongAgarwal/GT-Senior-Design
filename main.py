@@ -3,6 +3,7 @@
 Imports all files and defines the paths which would be called from frontend
 """
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from config import *
@@ -21,30 +22,43 @@ async def root(request: Request):
 
 @app.post("/get_response")
 @limiter.limit("100/minute")
-async def getResults(request: Request, responses: Items, background_tasks: BackgroundTasks):
+async def getResults(
+    request: Request, responses: Items, background_tasks: BackgroundTasks
+):
     inputVector = responses.answers
     prediction = get_prediction(inputVector)
-    background_tasks.add_task(add_response_to_db, responses=inputVector, predictionGiven=prediction)
+    background_tasks.add_task(
+        add_response_to_db, responses=inputVector, predictionGiven=prediction
+    )
     return {"message": prediction}
 
 
 @app.get("/login")
 @limiter.limit("100/minute")
-async def login(request: Request, ticket: Optional[str] = None):
+async def login(
+    request: Request, background_tasks: BackgroundTasks, ticket: Optional[str] = None
+):
     print("here")
-    return Oauth.login(request, ticket)
+    return Oauth.login(request, background_tasks, ticket)
 
 
-@app.get("/logout")
+@app.post("/logout")
 @limiter.limit("100/minute")
-async def logout(request: Request):
-    return Oauth.logout(request)
+async def logout(
+    request: Request, background_tasks: BackgroundTasks, responses: AuthKeys
+):
+    return Oauth.logout(request, background_tasks, responses.token)
 
 
 @app.post("/refreshToken")
 @limiter.limit("100/minute")
-async def refresh(request: Request, response: Response, responses: AuthKeys):
-    return Oauth.refresh(request, response, responses.token)
+async def refresh(
+    request: Request,
+    response: Response,
+    background_tasks: BackgroundTasks,
+    responses: AuthKeys,
+):
+    return Oauth.refresh(request, response, background_tasks, responses.token)
 
 
 @app.post("/getNext")
