@@ -15,7 +15,7 @@ class Records(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     username: Optional[str] = Field(default=None, primary_key=True)
-    auth: Optional[str] = Field(defualt=None) 
+    auth: Optional[str] = Field(default=None) 
 
 # engine = create_engine("sqlite:///database.db")
 # SQLModel.metadata.create_all(engine)
