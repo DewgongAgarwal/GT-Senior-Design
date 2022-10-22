@@ -9,7 +9,7 @@ authorizedUsers = []
 cas_client = CASClient(
     version=2,
     server_url="https://login.gatech.edu/cas/login",
-    service_url="http://localhost:8000/login",
+    service_url="https://www.mental-health-sd.com/login",
 )
 
 
@@ -25,8 +25,8 @@ def check_token(token):
 
 def _add_cookie_to_reponse(response, params):
     for i in params:
-        response.set_cookie(key=i, value=params[i])
-        # response.set_cookie(key=i, value=params[i], domain=".mental-health-sd.com")
+        # response.set_cookie(key=i, value=params[i])
+        response.set_cookie(key=i, value=params[i], domain=".mental-health-sd.com")
 
 
 def auth_token_generator(user):
