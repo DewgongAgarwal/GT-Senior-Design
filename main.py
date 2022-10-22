@@ -38,7 +38,6 @@ async def getResults(
 async def login(
     request: Request, background_tasks: BackgroundTasks, ticket: Optional[str] = None
 ):
-    print("here")
     return Oauth.login(request, background_tasks, ticket)
 
 
@@ -64,14 +63,12 @@ async def refresh(
 @app.post("/getNext")
 @limiter.limit("100/minute")
 async def next(request: Request, response: Response, responses: AuthKeys):
-    print(responses.token)
     if Oauth.check_token(responses.token):
         response = dict(read_next_invalidated())
         if "data" in response and not response["data"]:
-            print(response)
+            pass
         else:
             del response["_sa_instance_state"]
-            print(response)
         return response
     else:
         response.status_code = status.HTTP_400_BAD_REQUEST
@@ -90,7 +87,7 @@ async def updateForm(request: Request, response: Response, responses: Validation
         return {"message": "Submitted"}
     else:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"message": "Unauthorized Access."}
+        return Oauth.force_logout("Unauthorized Access.")
 
 
 @app.get("/reset")

@@ -13,7 +13,7 @@ from decouple import config
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 
-frontend_url = "https://fe.mental-health-sd.com"
+frontend_url = "http://localhost:5173"
 
 key = config("KEY", default="")
 

@@ -52,7 +52,6 @@ def updatePrediction(id, actualValue):
         session.add(record)
         session.commit()
         session.refresh(record)
-        print("Updated:", record)
     
     return record.questions, record.prediction if record else None, None
 
@@ -87,7 +86,7 @@ def check_user(decoded_user, auth_token):
         user = session.get(User, decoded_user)
         if not user:
             return False
-        return user.auth == auth_token
+        return str(user.auth).strip() == str(auth_token).strip()
 
 def remove_from_user(user):
     with Session(engine) as session:

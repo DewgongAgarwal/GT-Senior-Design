@@ -65,7 +65,6 @@ def get_prediction(input_context):
     Output:
         prediction: the arm that should be pulled, a string name 
     '''
-    print(input_context)
     # TODO: read A and b from JSON file --> maybe should check if input_A, input_b not None
     A = get_data_from_JSONfile("A.json")
     # is A = {arm: np.identity(CONTEXT_DIM) for arm in ARMS} on start
