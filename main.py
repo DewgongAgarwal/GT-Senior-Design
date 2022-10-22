@@ -93,7 +93,7 @@ async def updateForm(request: Request, response: Response, responses: Validation
         return {"message": "Unauthorized Access."}
 
 
-# @app.get("/reset")
-# @limiter.limit("100/minute")
-# async def reset(request: Request):
-#     resetDb()
+@app.get("/reset")
+@limiter.limit("100/minute")
+async def reset(request: Request):
+    resetDb()

@@ -64,7 +64,7 @@ def totalUnverified():
 
 def update_authToken(user, auth_token):
     with Session(engine) as session:
-        userRecord = select(User, user)
+        userRecord = session.get(User, user)
         if not userRecord:
             return
         userRecord.auth = auth_token 
@@ -73,33 +73,46 @@ def update_authToken(user, auth_token):
         session.refresh(userRecord)
 
 def add_to_user(user, auth_token):
-    data = User(username = user, auth = auth_token)
     with Session(engine) as session:
-        session.add(data)
-        session.commit()
+        userRecord = session.get(User, user)
+        if userRecord:
+            update_authToken(user, auth_token)
+        else:
+            data = User(username = user, auth = auth_token)
+            session.add(data)
+            session.commit()
 
 def check_user(decoded_user, auth_token):
     with Session(engine) as session:
-        user = select(User, decoded_user)
+        user = session.get(User, decoded_user)
         if not user:
             return False
         return user.auth == auth_token
 
 def remove_from_user(user):
     with Session(engine) as session:
-        userRecord = select(User, user)
+        userRecord = session.get(User, user)
         if not userRecord:
             return
         session.delete(userRecord)
         session.commit()
 
-def resetDb():
+def resetDb(recordsReset=False):
     with Session(engine) as session:
-        statement = select(Records)
+        statement = select(User)
         results = session.exec(statement)
+        results = results.all()
         for record in results:
-            record.validated = False
-            record.actual = ''
-            session.add(record)
-            session.commit()
-            session.refresh(record)
+            session.delete(record)
+        session.commit()
+
+    if recordsReset:
+        with Session(engine) as session:
+            statement = select(Records)
+            results = session.exec(statement)
+            for record in results:
+                record.validated = False
+                record.actual = ''
+                session.add(record)
+                session.commit()
+                session.refresh(record)

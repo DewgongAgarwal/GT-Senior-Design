@@ -14,6 +14,8 @@ cas_client = CASClient(
 
 
 def check_token(token):
+    print(token)
+    print(jwt.decode(token, key, algorithms="HS256"))
     try:
         auth_token = jwt.decode(token, key, algorithms="HS256")
         print(auth_token["user"])
@@ -24,6 +26,7 @@ def check_token(token):
 
 def _add_cookie_to_reponse(response, params):
     for i in params:
+        # response.set_cookie(key=i, value=params[i])
         response.set_cookie(key=i, value=params[i], domain=".mental-health-sd.com")
 
 
