@@ -1,5 +1,5 @@
 authorizedUsers = [
-    'dagarwal47',
+    # 'dagarwal47',
     # 'etripathy3',
     'lchen399',
     'ssinghal46',
