@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import *
 from config import *
 from model import *
+from constants import authorizedUsers
 
-authorizedUsers = []
 
 cas_client = CASClient(
     version=2,
@@ -18,7 +18,7 @@ def check_token(token):
         auth_token = jwt.decode(token, key, algorithms="HS256")
         return check_user(
             auth_token["user"], token
-        )  # and auth_token["user"] in authorizedUsers
+        )  and auth_token["user"] in authorizedUsers
     except Exception as e:
         return False
 
@@ -48,7 +48,7 @@ def refresh(
             auth_token = jwt.decode(token, key, algorithms="HS256")
             if not check_user(
                 auth_token["user"], token
-            ):  # and auth_token["user"] not in authorizedUsers:
+            ) or auth_token["user"] not in authorizedUsers:
                 raise Exception("Unauthorized User")
             token = auth_token_generator(auth_token["user"])
             background_tasks.add_task(update_authToken, auth_token["user"], token)
@@ -69,7 +69,7 @@ def login(
 
     user, attributes, pgtiou = cas_client.verify_ticket(ticket)
 
-    if not user:  # or user not in authorizedUsers:
+    if not user or user not in authorizedUsers:
         response = RedirectResponse(frontend_url)
         _add_cookie_to_reponse(
             response, {"message": "Login Failed / Unauthorized Access"}
@@ -104,7 +104,7 @@ def logout(request: Request, background_tasks: BackgroundTasks, token):
             auth_token = jwt.decode(token, key, algorithms="HS256")
             if not check_user(
                 auth_token["user"], token
-            ):  # and auth_token["user"] not in authorizedUsers:
+            ) or auth_token["user"] not in authorizedUsers:
                 raise Exception("Unauthorized User")
             background_tasks.add_task(remove_from_user, auth_token["user"])
         finally:
