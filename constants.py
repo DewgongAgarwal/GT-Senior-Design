@@ -9,5 +9,7 @@ authorizedUsers = [
     'ns109',
     'th128',
     'cbradley44',
-    'dn52'
+    'dn52',
+    'cwright89',
+    'oschimbischi3',
 ]
