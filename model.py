@@ -96,22 +96,22 @@ def remove_from_user(user):
         session.delete(userRecord)
         session.commit()
 
-def resetDb(recordsReset=False):
-    with Session(engine) as session:
-        statement = select(User)
-        results = session.exec(statement)
-        results = results.all()
-        for record in results:
-            session.delete(record)
-        session.commit()
+# def resetDb(recordsReset=False):
+#     with Session(engine) as session:
+#         statement = select(User)
+#         results = session.exec(statement)
+#         results = results.all()
+#         for record in results:
+#             session.delete(record)
+#         session.commit()
 
-    if recordsReset:
-        with Session(engine) as session:
-            statement = select(Records)
-            results = session.exec(statement)
-            for record in results:
-                record.validated = False
-                record.actual = ''
-                session.add(record)
-                session.commit()
-                session.refresh(record)
+#     if recordsReset:
+#         with Session(engine) as session:
+#             statement = select(Records)
+#             results = session.exec(statement)
+#             for record in results:
+#                 record.validated = False
+#                 record.actual = ''
+#                 session.add(record)
+#                 session.commit()
+#                 session.refresh(record)
